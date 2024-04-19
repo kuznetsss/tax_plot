@@ -1,3 +1,5 @@
+use std::iter::Iterator;
+
 struct TaxLevel {
     income: f32,
     tax: f32,
@@ -28,6 +30,7 @@ pub struct InputData {
 }
 
 pub struct TaxData {
+    pub base_salary: f32,
     pub total_income: f32,
     pub tax_value: f32,
 }
@@ -46,9 +49,47 @@ pub fn calculate(base_salary: f32, data: &InputData) -> TaxData {
     tax_value +=
         (TAX_LEVELS.last().unwrap().income - personal_allowance) * TAX_LEVELS.last().unwrap().tax;
     TaxData {
+        base_salary,
         total_income,
         tax_value,
     }
+}
+
+pub struct BaseSalaryRange {
+    start: f32,
+    end: f32,
+    step: f32,
+    current: usize
+}
+
+impl BaseSalaryRange {
+    pub fn new(start: f32, end: f32, step: f32) -> Self {
+        BaseSalaryRange {
+            start,
+            end,
+            step,
+            current: 0
+        }
+    }
+}
+
+impl Iterator for BaseSalaryRange {
+    type Item = f32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let value = self.start + self.step * (self.current as f32);
+        if value < self.end {
+            self.current += 1;
+            Some(value)
+        } else {
+            None
+        }
+    }
+}
+
+
+pub fn calculate_for_range(base_salary_range: BaseSalaryRange, data: &InputData) -> Vec<TaxData> {
+    base_salary_range.map(|s| calculate(s, data)).collect()
 }
 
 fn get_personal_allowance(total_income: f32) -> f32 {
@@ -96,12 +137,10 @@ mod tests {
             (106_000., 30_431.8),
             (135_140., 44_501.8),
         ] {
-            let TaxData {
-                total_income,
-                tax_value,
-            } = calculate(base_salary, &data);
-            expect_near(total_income, base_salary);
-            expect_near(tax_value, expected_tax_value);
+            let tax_data = calculate(base_salary, &data);
+            expect_near(tax_data.total_income, base_salary);
+            expect_near(tax_data.tax_value, expected_tax_value);
+            expect_near(tax_data.base_salary, base_salary);
         }
     }
 
@@ -114,12 +153,10 @@ mod tests {
         };
         let base_salary = 22_570.;
         let expected_tax_value = 4_257.;
-        let TaxData {
-            total_income,
-            tax_value,
-        } = calculate(base_salary, &data);
-        expect_near(total_income, base_salary);
-        expect_near(tax_value, expected_tax_value);
+        let tax_data = calculate(base_salary, &data);
+        expect_near(tax_data.total_income, base_salary);
+        expect_near(tax_data.tax_value, expected_tax_value);
+        expect_near(tax_data.base_salary, base_salary);
     }
 
     #[test]
@@ -131,12 +168,10 @@ mod tests {
         };
         let base_salary = 22_570.;
         let expected_tax_value = 2_200.;
-        let TaxData {
-            total_income,
-            tax_value,
-        } = calculate(base_salary, &data);
-        expect_near(total_income, base_salary + data.other_income);
-        expect_near(tax_value, expected_tax_value);
+        let tax_data = calculate(base_salary, &data);
+        expect_near(tax_data.total_income, base_salary + data.other_income);
+        expect_near(tax_data.tax_value, expected_tax_value);
+        expect_near(tax_data.base_salary, base_salary);
     }
 
     #[test]
@@ -149,11 +184,9 @@ mod tests {
         let base_salary = 22_570.;
         let expected_tax_value = 2_451.4;
         let expected_total_income = 24_827.;
-        let TaxData {
-            total_income,
-            tax_value,
-        } = calculate(base_salary, &data);
-        expect_near(total_income, expected_total_income);
-        expect_near(tax_value, expected_tax_value);
+        let tax_data = calculate(base_salary, &data);
+        expect_near(tax_data.total_income, expected_total_income);
+        expect_near(tax_data.tax_value, expected_tax_value);
+        expect_near(tax_data.base_salary, base_salary);
     }
 }
