@@ -1,4 +1,6 @@
 import init, { BaseSalaryRange, InputData, calculate_for_range } from './wasm/tax_plot.js'
+import { Plot } from './plot.js'
+
 
 await init()
 
@@ -13,9 +15,12 @@ function updateTheme() { html.setAttribute('data-theme', themeSwitcher.checked ?
 
 updateTheme()
 
+const plot = new Plot()
+
 themeSwitcher.addEventListener('change', (e) => {
     e.preventDefault()
     updateTheme()
+    plot.updateTheme()
 })
 
 
@@ -36,9 +41,7 @@ function checkStartEnd(start, end) {
 
 function getValue(elementId) { return parseFloat(document.getElementById(elementId).value) }
 
-const chartElement = document.getElementById('chart')
 const form = document.getElementById('form')
-chart = null
 
 form.addEventListener('submit', (e) => {
     e.preventDefault()
@@ -58,44 +61,7 @@ form.addEventListener('submit', (e) => {
     const inputData = InputData.new(pension, otherIncome, annualBonus)
     const taxData = calculate_for_range(baseSalaryRange, inputData)
 
-    if (chart != null) { chart.destroy() }
-    chart = makeChart(taxData)
+    plot.update(taxData)
 })
 
-function makeChart(taxData) {
-    return new Chart(chartElement, {
-        type: 'line',
-        data: {
-            labels: taxData.base_salary(),
-            datasets: [{
-                label: 'Income after tax',
-                data: taxData.income_after_tax(),
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'linear',
-                    title: {
-                        display: true,
-                        text: 'Base salary, £'
-                    }
-                },
-                y: {
-                    type: 'linear',
-                    title: {
-                        display: true,
-                        text: 'Total income after tax, £'
-                    }
-                }
 
-            },
-            plugins: {
-                legend: { display: false }
-            }
-        },
-    })
-}
