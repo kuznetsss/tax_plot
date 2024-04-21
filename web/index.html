@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <title>Tax and salary calculator</title>
+</head>
+
+<body>
+    <header class="container">
+        <nav>
+
+            <h1>UK tax and salary calculator</h1>
+
+            <li> <label>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                        class="bi bi-moon" viewBox="0 0 16 16">
+                        <path
+                            d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278M4.858 1.311A7.27 7.27 0 0 0 1.025 7.71c0 4.02 3.279 7.276 7.319 7.276a7.32 7.32 0 0 0 5.205-2.162q-.506.063-1.029.063c-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286" />
+                    </svg>
+                    <input id="theme_switcher" type="checkbox" role="switch" style="margin: 0; padding: 0;" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-sun"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6m0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708" />
+                    </svg>
+                </label>
+            </li>
+        </nav>
+
+    </header>
+
+    <main class="container">
+        <blockquote>
+            <mark>Disclaimer:</mark>
+            I am not a tax expert (even not a frontend developer).
+            The information provided is not guaranteed to be accurate.
+            Use it at your own risk.
+        </blockquote>
+        <form id="form">
+            <label for="base_salary">Base salary, £:
+                <input type="number" name="base_salary" id="base_salary" placeholder="Base salary" value="20000" min=0
+                    required=true>
+            </label>
+            <div class="grid">
+                <div>
+                    <label for="annual_bonus">Annual bonus, % of base salary:
+                        <input type="number" name="annual_bonus" id="annual_bonus" placeholder="Annual bonus" value="10"
+                            min=0 max=100 required=true>
+                    </label>
+                </div>
+
+                <div>
+                    <label for="pension">Pension contribution, % of base salary:
+                        <input type="number" name="pension" id="pension" placeholder="Pension contribution" value="5"
+                            min=0 max=100 required=true>
+                    </label>
+                </div>
+
+                <div>
+                    <label for="other_income">Other income, £:
+                        <input type="number" name="other_income" id="other_income" placeholder="Other income" value="0"
+                            min=0 required=true>
+                    </label>
+                </div>
+            </div>
+                <div class="grid" id="plot_settings">
+                    <div>
+                        <label for="plot_start">Plot start from, £:
+                            <input type="number" name="plot_start" id="plot_start" placeholder="Plot base salary start"
+                                value="0" min=0 required=true>
+                        </label>
+                    </div>
+                    <div>
+                        <label for="plot_end">Plot end at, £:
+                            <input type="number" name="plot_end" id="plot_end" placeholder="Plot base salary end"
+                                value="200000" min=0 required=true>
+                        </label>
+                    </div>
+                    <div>
+                        <label for="plot_step">Plot step, £:
+                            <input type="number" name="plot_step" id="plot_step" placeholder="Plot base salary step"
+                                value="500" min=100 required=true>
+                        </label>
+                    </div>
+                </div>
+            <button id="button">Calculate</button>
+        </form>
+        <br>
+        <div>
+            <canvas id="chart"></canvas>
+        </div>
+    </main>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module" src="./script.js"></script>
+
+</html>

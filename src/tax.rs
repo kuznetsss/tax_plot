@@ -32,12 +32,23 @@ pub struct InputData {
 }
 
 #[wasm_bindgen]
+impl InputData {
+    pub fn new(pension_contribution: f32, other_income: f32, annual_bonus: f32) -> Self {
+        InputData {
+            pension_contribution, other_income, annual_bonus
+        }
+    }
+}
+
+
+#[wasm_bindgen]
 pub struct TaxData {
     pub base_salary: f32,
     pub total_income: f32,
     pub tax_value: f32,
 }
 
+#[wasm_bindgen]
 fn calculate(base_salary: f32, data: &InputData) -> TaxData {
     let total_income = base_salary * (1.0 + data.annual_bonus) + data.other_income;
     let mut tax_value = base_salary * data.pension_contribution;
