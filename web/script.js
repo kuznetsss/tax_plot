@@ -24,13 +24,38 @@ themeSwitcher.addEventListener('change', (e) => {
 
 
 const plotStart = document.getElementById('plot_start');
-const plotEnd = document.getElementById('plot_end')
+const plotStartText = document.getElementById('plot_start_text');
+
+plotStart.addEventListener('input', (e) => {
+    e.preventDefault();
+    plotStartText.innerText = plotStart.value;
+    plotEnd.setAttribute('min', plotStart.value);
+})
+
+const plotEnd = document.getElementById('plot_end');
+const plotEndText = document.getElementById('plot_end_text');
+
+plotEnd.addEventListener('input', (e) => {
+    e.preventDefault();
+    plotEndText.innerText = plotEnd.value;
+    plotStart.setAttribute('max', plotEnd.value);
+})
+
+const plotStep = document.getElementById('plot_step');
+const plotStepText = document.getElementById('plot_step_text');
+
+plotStep.addEventListener('input', (e) => {
+    e.preventDefault()
+    plotStepText.innerText = plotStep.value;
+})
+
 function checkStartEnd(start, end) {
     if (start >= end) {
         plotStart.setAttribute('aria-invalid', 'true');
         plotStart.setAttribute('aria-describedby', 'Start must be lower than end');
         plotEnd.setAttribute('aria-invalid', 'true');
         plotEnd.setAttribute('aria-describedby', 'End must be higher than start');
+        console.log('start >= end: ', start, end)
         return false;
     }
     plotStart.removeAttribute('aria-invalid');
@@ -42,14 +67,14 @@ function getValue(elementId) { return parseFloat(document.getElementById(element
 
 const form = document.getElementById('form');
 
-form.addEventListener('submit', (e) => {
+function updatePlot(e) {
     e.preventDefault();
 
-    const plotStartValue = getValue('plot_start');
-    const plotEndValue = getValue('plot_end');
+    const plotStartValue = parseInt(plotStart.value);
+    const plotEndValue = parseInt(plotEnd.value);
     if (!checkStartEnd(plotStartValue, plotEndValue)) { return; }
 
-    const plotStepValue = getValue('plot_step');
+    const plotStepValue = parseInt(plotStep.value);
 
     const baseSalaryRange = BaseSalaryRange.new(plotStartValue, plotEndValue, plotStepValue);
 
@@ -61,6 +86,14 @@ form.addEventListener('submit', (e) => {
     const taxData = calculate_for_range(baseSalaryRange, inputData);
 
     plot.update(taxData);
-})
+    document.getElementById('plot_settings').removeAttribute('hidden')
+    plotStart.value = 0
+    plotEnd.value = 200000
+    plotStep.value = 500
+}
 
+form.addEventListener('submit', (e) => { updatePlot(e) })
+plotStart.addEventListener('change', (e) => { updatePlot(e) })
+plotEnd.addEventListener('change', (e) => { updatePlot(e) })
+plotStep.addEventListener('change', (e) => { updatePlot(e) })
 
