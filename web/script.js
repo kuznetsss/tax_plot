@@ -29,7 +29,7 @@ const plotStartText = document.getElementById('plot_start_text');
 plotStart.addEventListener('input', (e) => {
     e.preventDefault();
     plotStartText.innerText = plotStart.value;
-    plotEnd.setAttribute('min', plotStart.value);
+    plotEnd.setAttribute('min', parseInt(plotStart.value) + parseInt(plotEnd.step));
 })
 
 const plotEnd = document.getElementById('plot_end');
@@ -67,6 +67,8 @@ function getValue(elementId) { return parseFloat(document.getElementById(element
 
 const form = document.getElementById('form');
 
+const plotSettings = document.getElementById('plot_settings');
+
 function updatePlot(e) {
     e.preventDefault();
 
@@ -85,11 +87,14 @@ function updatePlot(e) {
     const inputData = InputData.new(pension, otherIncome, annualBonus);
     const taxData = calculate_for_range(baseSalaryRange, inputData);
 
+    if (plotSettings.hidden) {
+        plotSettings.hidden = false
+        plotStart.value = 0
+        plotEnd.value = 150000
+        plotStep.value = 1000
+    }
+
     plot.update(taxData);
-    document.getElementById('plot_settings').removeAttribute('hidden')
-    plotStart.value = 0
-    plotEnd.value = 200000
-    plotStep.value = 500
 }
 
 form.addEventListener('submit', (e) => { updatePlot(e) })
