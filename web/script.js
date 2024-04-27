@@ -1,4 +1,4 @@
-import init, { BaseSalaryRange, InputData, calculate_for_range } from './wasm/tax_plot.js';
+import init, { BaseSalaryRange, InputData, calculate_for_range, calculate } from './wasm/tax_plot.js';
 import { Plot } from './plot.js';
 
 await init();
@@ -19,7 +19,6 @@ const plot = new Plot();
 themeSwitcher.addEventListener('change', (e) => {
     e.preventDefault();
     updateTheme();
-    plot.updateTheme();
 })
 
 
@@ -88,13 +87,15 @@ function updatePlot(e) {
     const taxData = calculate_for_range(baseSalaryRange, inputData);
 
     if (plotSettings.hidden) {
-        plotSettings.hidden = false
-        plotStart.value = 0
-        plotEnd.value = 150000
-        plotStep.value = 1000
+        plotSettings.hidden = false;
+        plotStart.value = 0;
+        plotEnd.value = 150000;
+        plotStep.value = 1000;
     }
 
-    plot.update(taxData);
+    const baseSalary = getValue('base_salary');
+    const taxDataAtBaseSalary = calculate(baseSalary, inputData);
+    plot.update(taxData, { x: baseSalary, y: taxDataAtBaseSalary.total_income - taxDataAtBaseSalary.tax_value });
 }
 
 form.addEventListener('submit', (e) => { updatePlot(e) })

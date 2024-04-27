@@ -49,7 +49,7 @@ pub struct TaxData {
 }
 
 #[wasm_bindgen]
-fn calculate(base_salary: f32, data: &InputData) -> TaxData {
+pub fn calculate(base_salary: f32, data: &InputData) -> TaxData {
     let total_income = base_salary * (1.0 + data.annual_bonus) + data.other_income;
     let mut tax_value = base_salary * data.pension_contribution;
     let mut income_to_tax = total_income;
