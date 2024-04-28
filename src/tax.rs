@@ -42,6 +42,7 @@ impl InputData {
 
 
 #[wasm_bindgen]
+#[derive(Clone)]
 pub struct TaxData {
     pub base_salary: f32,
     pub total_income: f32,
@@ -135,6 +136,11 @@ impl OutputData {
 
     pub fn income_after_tax(&self) -> js_sys::Float32Array {
         self.extract_data(|d| { d.total_income - d.tax_value })
+    }
+
+    pub fn at(&self, index: usize) -> TaxData {
+        assert!(index < self.data.len(), "Index must be smaller than data size");
+        return self.data[index].clone()
     }
 }
 
