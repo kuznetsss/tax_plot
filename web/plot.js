@@ -1,3 +1,7 @@
+function isMobile() {
+    if ("maxTouchPoints" in navigator) return navigator.maxTouchPoints > 0;
+    return false;
+}
 
 class Plot {
     static taxData = null;
@@ -10,6 +14,7 @@ class Plot {
     tooltipData(context) {
         const taxData = Plot.taxData.at(context.at(0).dataIndex);
         return [
+            'Base salary: ' + taxData.base_salary.toLocaleString(),
             'Total income: ' + taxData.total_income.toLocaleString(),
             'Tax value: ' + taxData.tax_value.toLocaleString(),
         ];
@@ -28,9 +33,8 @@ class Plot {
         this.chart = new Chart(this.chartElement, {
             type: 'line',
             options: {
-                interaction: {
-                    mode: 'x'
-                },
+                aspectRatio: isMobile() ? 0.5 : 2,
+                interaction: { mode: 'nearest' },
                 plugins: {
                     legend: { display: false },
                     tooltip: {

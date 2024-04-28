@@ -79,7 +79,7 @@ function updatePlot(e) {
 
     const baseSalaryRange = BaseSalaryRange.new(plotStartValue, plotEndValue, plotStepValue);
 
-    const annualBonus = getValue('other_income') / 100.;
+    const annualBonus = getValue('annual_bonus') / 100.;
     const pension = getValue('pension') / 100.;
     const otherIncome = getValue('other_income');
 
