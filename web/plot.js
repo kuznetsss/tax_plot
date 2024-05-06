@@ -18,6 +18,7 @@ class Plot {
             'Base salary: ' + taxData.base_salary.toLocaleString(),
             'Total income: ' + taxData.total_income.toLocaleString(),
             'Tax value: ' + taxData.tax_value.toLocaleString(),
+            'National insurance: ' + taxData.national_insurance.toLocaleString(),
         ];
 
     }
@@ -105,7 +106,7 @@ class Plot {
                 // label: 'Current base salary',
                 data: [{
                     x: currentPoint.base_salary,
-                    y: currentPoint.total_income - currentPoint.tax_value
+                    y: currentPoint.income_after_tax()
                 }],
                 fill: true,
                 borderColor: 'rgb(168, 52, 16)',

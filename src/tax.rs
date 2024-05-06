@@ -21,6 +21,17 @@ const TAX_LEVELS: [TaxLevel; 3] = [
     },
 ];
 
+const NI_LEVELS: [TaxLevel; 2] = [
+    TaxLevel {
+        income: 4_189.,
+        tax: 0.02,
+    },
+    TaxLevel {
+        income: 1_048.,
+        tax: 0.08,
+    },
+];
+
 #[wasm_bindgen]
 pub struct InputData {
     /// part of base salary goes to pension
@@ -35,11 +46,25 @@ pub struct InputData {
 impl InputData {
     pub fn new(pension_contribution: f32, other_income: f32, annual_bonus: f32) -> Self {
         InputData {
-            pension_contribution, other_income, annual_bonus
+            pension_contribution,
+            other_income,
+            annual_bonus,
         }
     }
 }
 
+fn get_national_insurance(total_income: f32) -> f32 {
+    let mut monthly_income = total_income / 12.;
+    let monthly_contribution: f32 = NI_LEVELS
+        .iter()
+        .map(|l| {
+            let taxed_value = (monthly_income - l.income).max(0.) * l.tax;
+            monthly_income = monthly_income.min(l.income);
+            taxed_value
+        })
+        .sum();
+    monthly_contribution * 12.
+}
 
 #[wasm_bindgen]
 #[derive(Clone)]
@@ -47,6 +72,14 @@ pub struct TaxData {
     pub base_salary: f32,
     pub total_income: f32,
     pub tax_value: f32,
+    pub national_insurance: f32,
+}
+
+#[wasm_bindgen]
+impl TaxData {
+    pub fn income_after_tax(&self) -> f32 {
+        self.total_income - self.tax_value - self.national_insurance
+    }
 }
 
 #[wasm_bindgen]
@@ -63,10 +96,13 @@ pub fn calculate(base_salary: f32, data: &InputData) -> TaxData {
     let personal_allowance = get_personal_allowance(total_income);
     tax_value +=
         (TAX_LEVELS.last().unwrap().income - personal_allowance) * TAX_LEVELS.last().unwrap().tax;
+
+    let national_insurance = get_national_insurance(total_income);
     TaxData {
         base_salary,
         total_income,
         tax_value,
+        national_insurance,
     }
 }
 
@@ -135,25 +171,29 @@ impl OutputData {
     }
 
     pub fn income_after_tax(&self) -> js_sys::Float32Array {
-        self.extract_data(|d| { d.total_income - d.tax_value })
+        self.extract_data(|d| d.income_after_tax())
     }
 
     pub fn at(&self, index: usize) -> TaxData {
-        assert!(index < self.data.len(), "Index must be smaller than data size");
-        return self.data[index].clone()
+        assert!(
+            index < self.data.len(),
+            "Index must be smaller than data size"
+        );
+        self.data[index].clone()
     }
 }
 
 #[wasm_bindgen]
 pub fn calculate_for_range(base_salary_range: BaseSalaryRange, data: &InputData) -> OutputData {
     let data: Vec<_> = base_salary_range.map(|s| calculate(s, data)).collect();
-    OutputData{ data }
+    OutputData { data }
 }
 
 fn get_personal_allowance(total_income: f32) -> f32 {
     assert!(
         total_income >= 0.,
-        "Total income can't be negative. Got {}", total_income
+        "Total income can't be negative. Got {}",
+        total_income
     );
     match total_income {
         t if (0.0..=100_000.).contains(&t) => 12_570.,
@@ -170,7 +210,7 @@ mod tests {
 
     fn expect_near(a: f32, b: f32) {
         const PRECISION: f32 = 1e-3;
-        assert!((a - b).abs() < PRECISION, "{a} is different from {b}");
+        assert!((a - b).abs() < PRECISION, "{} is different from {}", a, b);
     }
 
     #[test]
@@ -178,6 +218,7 @@ mod tests {
         expect_near(get_personal_allowance(1.), 12_570.);
         expect_near(get_personal_allowance(100_000.), 12_570.);
         expect_near(get_personal_allowance(100_002.), 12_569.);
+        expect_near(get_personal_allowance(106_000.), 9_570.);
         expect_near(get_personal_allowance(125_141.), 0.);
     }
 
@@ -246,5 +287,12 @@ mod tests {
         expect_near(tax_data.total_income, expected_total_income);
         expect_near(tax_data.tax_value, expected_tax_value);
         expect_near(tax_data.base_salary, base_salary);
+    }
+
+    #[test]
+    fn test_national_insurance() {
+        expect_near(get_national_insurance(12_000.), 0.);
+        expect_near(get_national_insurance(24_000.), 913.92);
+        expect_near(get_national_insurance(72_000.), 3450.);
     }
 }
