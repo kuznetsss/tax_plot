@@ -21,6 +21,27 @@ class Plot {
 
     }
 
+    updateColors() {
+        const plotColor = getComputedStyle(document.body).getPropertyValue('color');
+
+        this.chart.options.plugins.tooltip.bodyColor = plotColor;
+        this.chart.options.plugins.tooltip.footerColor = plotColor;
+
+        this.chart.options.scales.x.title.color = plotColor;
+        this.chart.options.scales.x.grid.color = plotColor;
+        this.chart.options.scales.x.grid.tickColor = plotColor;
+        this.chart.options.scales.x.ticks.backDropColor = plotColor;
+        this.chart.options.scales.x.ticks.color = plotColor;
+
+        this.chart.options.scales.y.title.color = plotColor;
+        this.chart.options.scales.y.grid.color = plotColor;
+        this.chart.options.scales.y.grid.tickColor = plotColor;
+        this.chart.options.scales.y.ticks.backDropColor = plotColor;
+        this.chart.options.scales.y.ticks.color = plotColor;
+
+        this.chart.update();
+    }
+
     createChart() {
         if (this.chart != null) { return; }
 

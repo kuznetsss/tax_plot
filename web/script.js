@@ -19,6 +19,7 @@ const plot = new Plot();
 themeSwitcher.addEventListener('change', (e) => {
     e.preventDefault();
     updateTheme();
+    plot.updateColors();
 })
 
 
