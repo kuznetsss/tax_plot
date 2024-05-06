@@ -103,3 +103,4 @@ plotStart.addEventListener('change', (e) => { updatePlot(e) })
 plotEnd.addEventListener('change', (e) => { updatePlot(e) })
 plotStep.addEventListener('change', (e) => { updatePlot(e) })
 
+form.requestSubmit()
