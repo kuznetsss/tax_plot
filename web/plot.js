@@ -12,6 +12,7 @@ class Plot {
     }
 
     tooltipData(context) {
+        if (context.length == 0) return [];
         const taxData = Plot.taxData.at(context.at(0).dataIndex);
         return [
             'Base salary: ' + taxData.base_salary.toLocaleString(),
@@ -61,6 +62,9 @@ class Plot {
                     tooltip: {
                         bodyColor: plotColor,
                         bodyFont: { ...plotFont, weight: 'bold' },
+                        filter: function(tooltipItem) {
+                            return tooltipItem.datasetIndex === 1;
+                        },
                         footerColor: plotColor,
                         footerFont: { ...plotFont, weight: 'normal' },
                         displayColors: false,
@@ -93,12 +97,16 @@ class Plot {
         if (this.chart == null) { this.createChart(); }
 
         Plot.taxData = taxData;
+
         this.chart.data.labels = taxData.base_salary();
         this.chart.data.datasets = [
             {
                 animation: false,
                 // label: 'Current base salary',
-                data: [currentPoint],
+                data: [{
+                    x: currentPoint.base_salary,
+                    y: currentPoint.total_income - currentPoint.tax_value
+                }],
                 fill: true,
                 borderColor: 'rgb(168, 52, 16)',
                 borderWidth: 3,

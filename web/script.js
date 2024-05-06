@@ -96,7 +96,7 @@ function updatePlot(e) {
 
     const baseSalary = getValue('base_salary');
     const taxDataAtBaseSalary = calculate(baseSalary, inputData);
-    plot.update(taxData, { x: baseSalary, y: taxDataAtBaseSalary.total_income - taxDataAtBaseSalary.tax_value });
+    plot.update(taxData, taxDataAtBaseSalary);
 }
 
 form.addEventListener('submit', (e) => { updatePlot(e) })
