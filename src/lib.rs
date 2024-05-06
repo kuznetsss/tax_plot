@@ -1,5 +1,6 @@
 mod utils;
 mod tax;
+mod tax_impl;
 
 use wasm_bindgen::prelude::*;
 
