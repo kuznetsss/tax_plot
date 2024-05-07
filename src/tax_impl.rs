@@ -21,6 +21,7 @@ const TAX_LEVELS: [TaxLevel; 3] = [
 ];
 
 const NI_LEVELS: [TaxLevel; 2] = [
+    // For NI income is monthly not annual
     TaxLevel {
         income: 4_189.,
         tax: 0.02,
@@ -31,8 +32,11 @@ const NI_LEVELS: [TaxLevel; 2] = [
     },
 ];
 
+pub fn get_annual_bonus(base_salary: f32, data: &InputData) -> f32 {
+    base_salary * data.annual_bonus
+}
 pub fn get_total_income(base_salary: f32, data: &InputData) -> f32 {
-    base_salary * (1.0 + data.annual_bonus) + data.other_income
+     base_salary + get_annual_bonus(base_salary, data)+ data.other_income
 }
 
 pub fn get_personal_allowance(total_income: f32) -> f32 {
@@ -48,13 +52,12 @@ pub fn get_personal_allowance(total_income: f32) -> f32 {
     }
 }
 
-pub fn get_tax_value(
-    total_income: f32,
-    base_salary: f32,
-    personal_allowance: f32,
-    data: &InputData,
-) -> f32 {
-    let mut tax_value = base_salary * data.pension_contribution;
+pub fn get_pension_contribution(base_salary: f32, data: &InputData) -> f32 {
+    base_salary * data.pension_contribution
+}
+
+pub fn get_tax_value(total_income: f32, personal_allowance: f32) -> f32 {
+    let mut tax_value = 0.;
     let mut income_to_tax = total_income;
     for TaxLevel { income, tax } in TAX_LEVELS {
         if total_income > income {
@@ -78,6 +81,24 @@ pub fn get_national_insurance(total_income: f32) -> f32 {
         })
         .sum();
     monthly_contribution * 12.
+}
+
+pub fn get_pension_tax_relief(mut total_income: f32, pension_contribution: f32) -> f32 {
+    let mut result = pension_contribution * 0.2;
+    result += TAX_LEVELS
+        .iter()
+        .filter_map(|l| {
+            if l.tax <= 0.2 || l.income >= total_income {
+                return None;
+            }
+            let relief_part = l.tax - 0.2;
+            let result =
+                ((total_income - l.income) * relief_part).min(pension_contribution * relief_part);
+            total_income = l.income;
+            Some(result)
+        })
+        .sum::<f32>();
+    result
 }
 
 #[cfg(test)]
@@ -193,7 +214,7 @@ mod tests {
                     pension_contribution: 0.1,
                     other_income: 0.,
                 },
-                expected_result: 4_257.,
+                expected_result: 2_000.,
             },
         ] {
             let total_income = get_total_income(case.base_salary, &case.data);
@@ -201,9 +222,7 @@ mod tests {
             expect_near(
                 get_tax_value(
                     total_income,
-                    case.base_salary,
                     personal_allowance,
-                    &case.data,
                 ),
                 case.expected_result,
             )
@@ -215,5 +234,15 @@ mod tests {
         expect_near(get_national_insurance(12_000.), 0.);
         expect_near(get_national_insurance(24_000.), 913.92);
         expect_near(get_national_insurance(72_000.), 3450.);
+    }
+
+    #[test]
+    fn test_get_tax_relief() {
+        expect_near(get_pension_tax_relief(10_000., 1_000.), 200.);
+        expect_near(get_pension_tax_relief(40_000., 10_000.), 2_000.);
+        expect_near(get_pension_tax_relief(52_000., 5_200.), 1385.8);
+        expect_near(get_pension_tax_relief(60_000., 6_000.), 2_400.);
+        expect_near(get_pension_tax_relief(110_000., 11_000.), 4400.);
+        expect_near(get_pension_tax_relief(130_000., 13_000.), 6415.);
     }
 }

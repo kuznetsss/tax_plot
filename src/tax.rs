@@ -1,6 +1,6 @@
+use crate::tax_impl;
 use std::iter::Iterator;
 use wasm_bindgen::prelude::*;
-use crate::tax_impl;
 
 #[wasm_bindgen]
 #[derive(Clone)]
@@ -28,15 +28,23 @@ impl InputData {
 #[derive(Clone)]
 pub struct TaxData {
     pub base_salary: f32,
-    pub total_income: f32,
+    pub annual_bonus: f32,
+    pub other_income: f32,
     pub tax_value: f32,
     pub national_insurance: f32,
+    pub pension_contribution: f32,
+    pub pension_tax_relief: f32,
 }
 
 #[wasm_bindgen]
 impl TaxData {
-    pub fn income_after_tax(&self) -> f32 {
-        self.total_income - self.tax_value - self.national_insurance
+    pub fn total_income(&self) -> f32 {
+        self.base_salary + self.annual_bonus + self.other_income
+    }
+
+    pub fn take_home(&self) -> f32 {
+        self.total_income() - self.tax_value - self.national_insurance - self.pension_contribution
+            + self.pension_tax_relief
     }
 }
 
@@ -44,13 +52,18 @@ impl TaxData {
 pub fn calculate(base_salary: f32, data: &InputData) -> TaxData {
     let total_income = tax_impl::get_total_income(base_salary, data);
     let personal_allowance = tax_impl::get_personal_allowance(total_income);
-    let tax_value = tax_impl::get_tax_value(total_income, base_salary, personal_allowance, data);
+    let tax_value = tax_impl::get_tax_value(total_income, personal_allowance);
     let national_insurance = tax_impl::get_national_insurance(total_income);
+    let pension_contribution = tax_impl::get_pension_contribution(base_salary, data);
+    let pension_tax_relief = tax_impl::get_pension_tax_relief(total_income, pension_contribution);
     TaxData {
         base_salary,
-        total_income,
+        annual_bonus: tax_impl::get_annual_bonus(base_salary, data),
+        other_income: data.other_income,
         tax_value,
         national_insurance,
+        pension_contribution,
+        pension_tax_relief,
     }
 }
 
@@ -111,7 +124,7 @@ impl OutputData {
     }
 
     pub fn total_income(&self) -> js_sys::Float32Array {
-        self.extract_data(|d| d.total_income)
+        self.extract_data(|d| d.total_income())
     }
 
     pub fn tax_value(&self) -> js_sys::Float32Array {
@@ -119,7 +132,7 @@ impl OutputData {
     }
 
     pub fn income_after_tax(&self) -> js_sys::Float32Array {
-        self.extract_data(|d| d.income_after_tax())
+        self.extract_data(|d| d.take_home())
     }
 
     pub fn at(&self, index: usize) -> TaxData {
@@ -136,4 +149,3 @@ pub fn calculate_for_range(base_salary_range: BaseSalaryRange, data: &InputData)
     let data: Vec<_> = base_salary_range.map(|s| calculate(s, data)).collect();
     OutputData { data }
 }
-
