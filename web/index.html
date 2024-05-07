@@ -73,6 +73,45 @@
             <button id="button">Calculate</button>
         </form>
         <br>
+        <table>
+            <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="color: rgb(32, 81, 7)"> + base salary: </td>
+                    <td rowspan="3" style="color: rgb(32, 81, 7)"> some total</td>
+                </tr>
+                <tr>
+                    <td style="color: rgb(32, 81, 7)"> + annual bonus: </td>
+                </tr>
+                <tr>
+                    <td style="color: rgb(32, 81, 7)"> + other income: </td>
+                </tr>
+                <tr>
+                    <td style="color: rgb(127, 39, 11)"> - tax: </td>
+                    <td rowspan="4" style="color: rgb(127, 39, 11)"> some other total</td>
+                </tr>
+                <tr>
+                    <td style="color: rgb(127, 39, 11)"> - national insurance: </td>
+                </tr>
+                <tr>
+                    <td style="color: rgb(127, 39, 11)"> - pension contribution: </td>
+                </tr>
+                <tr>
+                    <td style="color: rgb(32, 81, 7)"> + pension tax relief: </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Take home: </td>
+                    <td> some value </td>
+                </tr>
+            </tfoot>
+        </table>
         <div>
             <canvas id="chart"></canvas>
         </div>
