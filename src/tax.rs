@@ -42,9 +42,12 @@ impl TaxData {
         self.base_salary + self.annual_bonus + self.other_income
     }
 
+    pub fn total_deductions(&self) -> f32 {
+        self.tax_value + self.national_insurance + self.pension_contribution - self.pension_tax_relief
+    }
+
     pub fn take_home(&self) -> f32 {
-        self.total_income() - self.tax_value - self.national_insurance - self.pension_contribution
-            + self.pension_tax_relief
+        self.total_income() - self.total_deductions()
     }
 }
 
@@ -108,30 +111,23 @@ pub struct OutputData {
 
 #[wasm_bindgen]
 impl OutputData {
-    fn extract_data<F>(&self, extractor: F) -> js_sys::Float32Array
+    fn extract_data<F>(&self, extractor: F) -> js_sys::Int32Array
     where
         F: Fn(&TaxData) -> f32,
     {
-        let js_data = js_sys::Float32Array::new_with_length(self.data.len() as u32);
+        let js_data = js_sys::Int32Array::new_with_length(self.data.len() as u32);
         self.data.iter().enumerate().for_each(|(i, d)| {
-            js_data.set_index(i as u32, extractor(d));
+            let extracted = extractor(d).round() as i32;
+            js_data.set_index(i as u32, extracted);
         });
         js_data
     }
 
-    pub fn base_salary(&self) -> js_sys::Float32Array {
+    pub fn base_salary(&self) -> js_sys::Int32Array {
         self.extract_data(|d| d.base_salary)
     }
 
-    pub fn total_income(&self) -> js_sys::Float32Array {
-        self.extract_data(|d| d.total_income())
-    }
-
-    pub fn tax_value(&self) -> js_sys::Float32Array {
-        self.extract_data(|d| d.tax_value)
-    }
-
-    pub fn income_after_tax(&self) -> js_sys::Float32Array {
+    pub fn take_home(&self) -> js_sys::Int32Array {
         self.extract_data(|d| d.take_home())
     }
 

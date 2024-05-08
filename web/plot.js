@@ -1,3 +1,5 @@
+import { toString } from "./utils.js";
+
 function isMobile() {
     if ("maxTouchPoints" in navigator) return navigator.maxTouchPoints > 0;
     return false;
@@ -15,10 +17,9 @@ class Plot {
         if (context.length == 0) return [];
         const taxData = Plot.taxData.at(context.at(0).dataIndex);
         return [
-            'Base salary: ' + taxData.base_salary.toLocaleString(),
-            'Total income: ' + taxData.total_income.toLocaleString(),
-            'Tax value: ' + taxData.tax_value.toLocaleString(),
-            'National insurance: ' + taxData.national_insurance.toLocaleString(),
+            'Base salary: ' + toString(taxData.base_salary),
+            'Total income: ' + toString(taxData.total_income()),
+            'Total deductions: ' + toString(taxData.total_deductions()),
         ];
 
     }
@@ -106,7 +107,7 @@ class Plot {
                 // label: 'Current base salary',
                 data: [{
                     x: currentPoint.base_salary,
-                    y: currentPoint.income_after_tax()
+                    y: currentPoint.take_home()
                 }],
                 fill: true,
                 borderColor: 'rgb(168, 52, 16)',
@@ -118,7 +119,7 @@ class Plot {
             {
                 animation: false,
                 label: 'Income after tax',
-                data: taxData.income_after_tax(),
+                data: taxData.take_home(),
                 fill: false,
                 borderColor: 'rgb(5, 162, 162)',
                 tension: 0

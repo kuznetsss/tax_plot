@@ -76,39 +76,45 @@
         <table>
             <thead>
                 <tr>
-                    <th>Operation</th>
+                    <th colspan="2">Operation</th>
                     <th>Total</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td style="color: rgb(32, 81, 7)"> + base salary: </td>
-                    <td rowspan="3" style="color: rgb(32, 81, 7)"> some total</td>
+                        <td>base salary:</td>
+                        <td><span style="color: rgb(44, 108, 12)" id="table_base_salary"></span></td>
+                    <td rowspan="3" style="color: rgb(44, 108, 12)"><span id="table_total_income"></span></td>
                 </tr>
                 <tr>
-                    <td style="color: rgb(32, 81, 7)"> + annual bonus: </td>
+                        <td>annual bonus:</td><td><span style="color: rgb(44, 108, 12)" id="table_annual_bonus"></span></td>
                 </tr>
                 <tr>
-                    <td style="color: rgb(32, 81, 7)"> + other income: </td>
+                        <td>other income:</td><td><span style="color: rgb(44, 108, 12)" id="table_other_income"></span></td>
                 </tr>
                 <tr>
-                    <td style="color: rgb(127, 39, 11)"> - tax: </td>
-                    <td rowspan="4" style="color: rgb(127, 39, 11)"> some other total</td>
+                        <td>tax:</td><td><span style="color: rgb(168, 52, 16)" id="table_tax"></span></td>
+                    <td rowspan="4"><span style="color: rgb(168, 52, 16)" id="table_total_deductions"></span></td>
                 </tr>
                 <tr>
-                    <td style="color: rgb(127, 39, 11)"> - national insurance: </td>
+                        <td>national insurance:</td><td><span style="color: rgb(168, 52, 16)" id="table_national_insurance"></span>
+                    </td>
                 </tr>
                 <tr>
-                    <td style="color: rgb(127, 39, 11)"> - pension contribution: </td>
+                        <td>pension contribution:</td><td><span style="color: rgb(168, 52, 16)" id="table_pension_contribution">
+                        </span></td>
                 </tr>
                 <tr>
-                    <td style="color: rgb(32, 81, 7)"> + pension tax relief: </td>
+                        <td>pension tax relief:</td><td><span style="color: rgb(44, 108, 12)" id="table_pension_tax_relief">
+                        </span></td>
                 </tr>
             </tbody>
             <tfoot>
                 <tr>
-                    <td>Take home: </td>
-                    <td> some value </td>
+                    <td>Take home:</td>
+                    <td>
+                        <span id="table_take_home"></span>
+                    </td>
                 </tr>
             </tfoot>
         </table>
@@ -124,13 +130,13 @@
                 </label>
             </div>
             <div>
-                <label for="plot_end">Plot end at, £: <span id="plot_end_text">150000</span>
+                <label for="plot_end">Plot end at, £: <span id="plot_end_text">140000</span>
                     <input type="range" name="plot_end" id="plot_end" placeholder="Plot base salary end" min=1000
                         max=500000 step=1000 value=150000>
                 </label>
             </div>
             <div>
-                <label for="plot_step">Plot step, £: <span id="plot_step_text">1000</span>
+                <label for="plot_step">Plot step, £: <span id="plot_step_text">2000</span>
                     <input type="range" name="plot_step" id="plot_step" placeholder="Plot base salary step" min=100
                         max=10000 step=100 value=1000>
                 </label>
@@ -157,5 +163,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="module" src="./script.js"></script>
+<script type="module" src="./plot.js"></script>
+<script type="module" src="./utils.js"></script>
 
 </html>

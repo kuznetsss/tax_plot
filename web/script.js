@@ -1,5 +1,6 @@
 import init, { BaseSalaryRange, InputData, calculate_for_range, calculate } from './wasm/tax_plot.js';
 import { Plot } from './plot.js';
+import { toString } from './utils.js';
 
 await init();
 
@@ -69,8 +70,21 @@ const form = document.getElementById('form');
 
 const plotSettings = document.getElementById('plot_settings');
 
-function updatePlot(e) {
-    e.preventDefault();
+function updateTable(taxData) {
+    document.getElementById('table_base_salary').innerText = '+ £ ' + toString(taxData.base_salary);
+    document.getElementById('table_annual_bonus').innerText = '+ £ ' + toString(taxData.annual_bonus);
+    document.getElementById('table_total_income').innerText = '+ £ ' + toString(taxData.total_income());
+    document.getElementById('table_other_income').innerText = '+ £ ' + toString(taxData.other_income);
+    document.getElementById('table_tax').innerText = '- £ ' + toString(taxData.tax_value);
+    document.getElementById('table_total_deductions').innerText = '- £ ' + toString(taxData.total_deductions());
+    document.getElementById('table_national_insurance').innerText = '- £ ' + toString(taxData.national_insurance);
+    document.getElementById('table_pension_contribution').innerText = '- £ ' + toString(taxData.pension_contribution);
+    document.getElementById('table_pension_tax_relief').innerText = '+ £ ' + toString(taxData.pension_tax_relief);
+    document.getElementById('table_take_home').innerText = '£ ' + toString(taxData.take_home());
+}
+
+function update(e) {
+    e.preventDefault()
 
     const plotStartValue = parseInt(plotStart.value);
     const plotEndValue = parseInt(plotEnd.value);
@@ -90,18 +104,19 @@ function updatePlot(e) {
     if (plotSettings.hidden) {
         plotSettings.hidden = false;
         plotStart.value = 0;
-        plotEnd.value = 150000;
-        plotStep.value = 1000;
+        plotEnd.value = 140000;
+        plotStep.value = 2000;
     }
 
     const baseSalary = getValue('base_salary');
     const taxDataAtBaseSalary = calculate(baseSalary, inputData);
     plot.update(taxData, taxDataAtBaseSalary);
+    updateTable(taxDataAtBaseSalary);
 }
 
-form.addEventListener('submit', (e) => { updatePlot(e) })
-plotStart.addEventListener('change', (e) => { updatePlot(e) })
-plotEnd.addEventListener('change', (e) => { updatePlot(e) })
-plotStep.addEventListener('change', (e) => { updatePlot(e) })
+form.addEventListener('submit', (e) => { update(e) })
+plotStart.addEventListener('change', (e) => { update(e) })
+plotEnd.addEventListener('change', (e) => { update(e) })
+plotStep.addEventListener('change', (e) => { update(e) })
 
 form.requestSubmit()
