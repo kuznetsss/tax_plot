@@ -36,7 +36,7 @@ pub fn get_annual_bonus(base_salary: f32, data: &InputData) -> f32 {
     base_salary * data.annual_bonus
 }
 pub fn get_total_income(base_salary: f32, data: &InputData) -> f32 {
-     base_salary + get_annual_bonus(base_salary, data)+ data.other_income
+    base_salary + get_annual_bonus(base_salary, data) + data.other_income
 }
 
 pub fn get_personal_allowance(total_income: f32) -> f32 {
@@ -220,10 +220,7 @@ mod tests {
             let total_income = get_total_income(case.base_salary, &case.data);
             let personal_allowance = get_personal_allowance(total_income);
             expect_near(
-                get_tax_value(
-                    total_income,
-                    personal_allowance,
-                ),
+                get_tax_value(total_income, personal_allowance),
                 case.expected_result,
             )
         }

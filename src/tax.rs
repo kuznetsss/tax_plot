@@ -43,7 +43,8 @@ impl TaxData {
     }
 
     pub fn total_deductions(&self) -> f32 {
-        self.tax_value + self.national_insurance + self.pension_contribution - self.pension_tax_relief
+        self.tax_value + self.national_insurance + self.pension_contribution
+            - self.pension_tax_relief
     }
 
     pub fn take_home(&self) -> f32 {

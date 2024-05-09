@@ -1,6 +1,6 @@
-mod utils;
 mod tax;
 mod tax_impl;
+mod utils;
 
 use wasm_bindgen::prelude::*;
 
@@ -8,4 +8,3 @@ use wasm_bindgen::prelude::*;
 extern "C" {
     fn alert(s: &str);
 }
-
