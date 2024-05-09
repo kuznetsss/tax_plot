@@ -35,3 +35,37 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+    - uses: actions/upload-artifact@v4
+      with:
+        name: target
+        path: target
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/download-artifact@v4
+        with:
+          name: target
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - name: Build wasm
+        run: wasm-pack build --target web
+      - name: Prepare release
+        run: |
+          mkdir release
+          cp -r ./web/* -t ./release
+          mkdir release/wasm
+          cp pkg/tax_plot* -t ./release/wasm
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./release
+      - uses: actions/deploy-pages@v4
+
