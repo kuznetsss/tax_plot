@@ -82,30 +82,36 @@
             </thead>
             <tbody>
                 <tr>
-                        <td>base salary:</td>
-                        <td><span style="color: rgb(44, 108, 12)" id="table_base_salary"></span></td>
+                    <td>base salary:</td>
+                    <td><span style="color: rgb(44, 108, 12)" id="table_base_salary"></span></td>
                     <td rowspan="3" style="color: rgb(44, 108, 12)"><span id="table_total_income"></span></td>
                 </tr>
                 <tr>
-                        <td>annual bonus:</td><td><span style="color: rgb(44, 108, 12)" id="table_annual_bonus"></span></td>
+                    <td>annual bonus:</td>
+                    <td><span style="color: rgb(44, 108, 12)" id="table_annual_bonus"></span></td>
                 </tr>
                 <tr>
-                        <td>other income:</td><td><span style="color: rgb(44, 108, 12)" id="table_other_income"></span></td>
+                    <td>other income:</td>
+                    <td><span style="color: rgb(44, 108, 12)" id="table_other_income"></span></td>
                 </tr>
                 <tr>
-                        <td>tax:</td><td><span style="color: rgb(168, 52, 16)" id="table_tax"></span></td>
+                    <td>tax:</td>
+                    <td><span style="color: rgb(168, 52, 16)" id="table_tax"></span></td>
                     <td rowspan="4"><span style="color: rgb(168, 52, 16)" id="table_total_deductions"></span></td>
                 </tr>
                 <tr>
-                        <td>national insurance:</td><td><span style="color: rgb(168, 52, 16)" id="table_national_insurance"></span>
+                    <td>national insurance:</td>
+                    <td><span style="color: rgb(168, 52, 16)" id="table_national_insurance"></span>
                     </td>
                 </tr>
                 <tr>
-                        <td>pension contribution:</td><td><span style="color: rgb(168, 52, 16)" id="table_pension_contribution">
+                    <td>pension contribution:</td>
+                    <td><span style="color: rgb(168, 52, 16)" id="table_pension_contribution">
                         </span></td>
                 </tr>
                 <tr>
-                        <td>pension tax relief:</td><td><span style="color: rgb(44, 108, 12)" id="table_pension_tax_relief">
+                    <td>pension tax relief:</td>
+                    <td><span style="color: rgb(44, 108, 12)" id="table_pension_tax_relief">
                         </span></td>
                 </tr>
             </tbody>
@@ -122,23 +128,23 @@
             <canvas id="chart"></canvas>
         </div>
         <br>
-        <div class="grid" id="plot_settings" hidden>
+        <div class="grid" id="plot_settings">
             <div>
                 <label for="plot_start">Plot start from, £: <span id="plot_start_text">0</span>
                     <input type="range" name="plot_start" id="plot_start" placeholder="Plot base salary start" min=0
-                        max=149000 value=0 step=1000>
+                        max=149000 value=0 step=2000>
                 </label>
             </div>
             <div>
                 <label for="plot_end">Plot end at, £: <span id="plot_end_text">140000</span>
                     <input type="range" name="plot_end" id="plot_end" placeholder="Plot base salary end" min=1000
-                        max=500000 step=1000 value=150000>
+                        max=500000 step=1000 value=140000>
                 </label>
             </div>
             <div>
                 <label for="plot_step">Plot step, £: <span id="plot_step_text">2000</span>
                     <input type="range" name="plot_step" id="plot_step" placeholder="Plot base salary step" min=100
-                        max=10000 step=100 value=1000>
+                        max=10000 step=100 value=2000>
                 </label>
             </div>
         </div>

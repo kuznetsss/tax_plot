@@ -85,7 +85,7 @@ class Plot {
                     },
                     y: {
                         type: 'linear',
-                        title: { text: 'Total income after tax, £', display: true, color: plotColor, font: plotFont },
+                        title: { text: 'Take home, £', display: true, color: plotColor, font: plotFont },
                         grid: { color: plotColor, tickColor: plotColor },
                         ticks: { backDropColor: plotColor, color: plotColor, font: plotFont }
                     }
@@ -118,7 +118,7 @@ class Plot {
             },
             {
                 animation: false,
-                label: 'Income after tax',
+                label: 'Take home',
                 data: taxData.take_home(),
                 fill: false,
                 borderColor: 'rgb(5, 162, 162)',

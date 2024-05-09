@@ -101,13 +101,6 @@ function update(e) {
     const inputData = InputData.new(pension, otherIncome, annualBonus);
     const taxData = calculate_for_range(baseSalaryRange, inputData);
 
-    if (plotSettings.hidden) {
-        plotSettings.hidden = false;
-        plotStart.value = 0;
-        plotEnd.value = 140000;
-        plotStep.value = 2000;
-    }
-
     const baseSalary = getValue('base_salary');
     const taxDataAtBaseSalary = calculate(baseSalary, inputData);
     plot.update(taxData, taxDataAtBaseSalary);
