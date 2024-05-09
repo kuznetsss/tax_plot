@@ -1,9 +1,13 @@
 # Tax plot
 
+![[](https://github.com/kuznetsss/tax_plot/actions/workflows/main.yml)](https://github.com/kuznetsss/tax_plot/actions/workflows/main.yml/badge.svg)
+
 This repository contains code of a simple website that calculates tax in the UK for given income.
 The website provides detailed information on all the deductions and also shows a plot of how the tax changes with income.
 All the calculations are written in Rust and compiled to WebAssembly.
 This is my first frontend project so html and js code might not be the best.
+
+The website is hosted at [https://kuznetsss.github.io/tax_plot/](https://kuznetsss.github.io/tax_plot/).
 
 > [!WARNING]
 > I'm not a tax advisor, the calculations are based on my understanding of the tax system in the UK. Please consult with a professional tax advisor before making any decisions.
